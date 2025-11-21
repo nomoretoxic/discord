@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import express from "express";  // <-- Added
 import { Client, GatewayIntentBits, EmbedBuilder } from 'discord.js';
 import { status } from 'minecraft-server-util';
 
@@ -60,7 +61,23 @@ async function checkPlayers() {
     }
 }
 
-// Start bot
+// -----------------------------
+// ✅ Express Server for Render
+// -----------------------------
+const app = express();
+
+app.get("/", (req, res) => {
+    res.send("Discord bot is running!");
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Express server running on port ${PORT}`);
+});
+
+// -----------------------------
+// Start Discord Bot
+// -----------------------------
 client.once("ready", () => {
     console.log(`Logged in as ${client.user.tag}`);
     checkPlayers();
@@ -68,5 +85,3 @@ client.once("ready", () => {
 });
 
 client.login(TOKEN);
-
-        
