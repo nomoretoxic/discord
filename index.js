@@ -2,15 +2,16 @@ import 'dotenv/config';
 import { Client, GatewayIntentBits, EmbedBuilder } from 'discord.js';
 import { status } from 'minecraft-server-util';
 
+// ENV variables
 const TOKEN = process.env.DISCORD_TOKEN;
 const GUILD_ID = process.env.GUILD_ID;
 const CHANNEL_ID = process.env.CHANNEL_ID;
 
 const SERVER_IP = process.env.SERVER_IP;
-cconst SERVER_PORT = parseInt(process.env.SERVER_PORT) || 54699;
+const SERVER_PORT = parseInt(process.env.SERVER_PORT) || 25565;
 const POLL_INTERVAL = parseInt(process.env.POLL_INTERVAL) || 5000;
 
-
+// Create Discord client
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 let previousPlayers = new Set();
@@ -18,6 +19,7 @@ let previousPlayers = new Set();
 async function checkPlayers() {
     try {
         const result = await status(SERVER_IP, SERVER_PORT);
+
         const currentPlayers = new Set(result.players.sample?.map(p => p.name) || []);
 
         // Detect joins and leaves
@@ -27,8 +29,8 @@ async function checkPlayers() {
         const guild = await client.guilds.fetch(GUILD_ID);
         const channel = await guild.channels.fetch(CHANNEL_ID);
 
-        // Send join messages with skin head
-        joined.forEach(player => {
+        // JOIN MESSAGES
+        for (const player of joined) {
             const uuid = result.players.sample.find(p => p.name === player)?.id;
 
             const embed = new EmbedBuilder()
@@ -36,11 +38,11 @@ async function checkPlayers() {
                 .setThumbnail(`https://crafatar.com/avatars/${uuid}?size=64&overlay`)
                 .setColor("Green");
 
-            channel.send({ embeds: [embed] });
-        });
+            await channel.send({ embeds: [embed] });
+        }
 
-        // Send leave messages with skin head
-        left.forEach(player => {
+        // LEAVE MESSAGES
+        for (const player of left) {
             const uuid = result.players.sample.find(p => p.name === player)?.id;
 
             const embed = new EmbedBuilder()
@@ -48,8 +50,8 @@ async function checkPlayers() {
                 .setThumbnail(`https://crafatar.com/avatars/${uuid}?size=64&overlay`)
                 .setColor("Red");
 
-            channel.send({ embeds: [embed] });
-        });
+            await channel.send({ embeds: [embed] });
+        }
 
         previousPlayers = currentPlayers;
 
@@ -58,6 +60,7 @@ async function checkPlayers() {
     }
 }
 
+// Start bot
 client.once("ready", () => {
     console.log(`Logged in as ${client.user.tag}`);
     checkPlayers();
@@ -65,3 +68,5 @@ client.once("ready", () => {
 });
 
 client.login(TOKEN);
+
+        
