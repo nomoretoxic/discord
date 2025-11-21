@@ -7,8 +7,9 @@ const GUILD_ID = process.env.GUILD_ID;
 const CHANNEL_ID = process.env.CHANNEL_ID;
 
 const SERVER_IP = process.env.SERVER_IP;
-const SERVER_PORT = parseInt(process.env.SERVER_PORT) || 
+cconst SERVER_PORT = parseInt(process.env.SERVER_PORT) || 54699;
 const POLL_INTERVAL = parseInt(process.env.POLL_INTERVAL) || 5000;
+
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
