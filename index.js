@@ -1,11 +1,11 @@
 import 'dotenv/config';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, EmbedBuilder } from 'discord.js';
 import { status } from 'minecraft-server-util';
 
-// Load variables from .env
 const TOKEN = process.env.DISCORD_TOKEN;
 const GUILD_ID = process.env.GUILD_ID;
 const CHANNEL_ID = process.env.CHANNEL_ID;
+
 const SERVER_IP = process.env.SERVER_IP;
 const SERVER_PORT = parseInt(process.env.SERVER_PORT) || 25565;
 const POLL_INTERVAL = parseInt(process.env.POLL_INTERVAL) || 5000;
@@ -26,22 +26,41 @@ async function checkPlayers() {
         const guild = await client.guilds.fetch(GUILD_ID);
         const channel = await guild.channels.fetch(CHANNEL_ID);
 
-        joined.forEach(player => channel.send(`✅ **${player} joined the server!**`));
-        left.forEach(player => channel.send(`❌ **${player} left the server!**`));
+        // Send join messages with skin head
+        joined.forEach(player => {
+            const uuid = result.players.sample.find(p => p.name === player)?.id;
+
+            const embed = new EmbedBuilder()
+                .setTitle(`🟢 ${player} joined the server!`)
+                .setThumbnail(`https://crafatar.com/avatars/${uuid}?size=64&overlay`)
+                .setColor("Green");
+
+            channel.send({ embeds: [embed] });
+        });
+
+        // Send leave messages with skin head
+        left.forEach(player => {
+            const uuid = result.players.sample.find(p => p.name === player)?.id;
+
+            const embed = new EmbedBuilder()
+                .setTitle(`🔴 ${player} left the server!`)
+                .setThumbnail(`https://crafatar.com/avatars/${uuid}?size=64&overlay`)
+                .setColor("Red");
+
+            channel.send({ embeds: [embed] });
+        });
 
         previousPlayers = currentPlayers;
+
     } catch (err) {
-        console.log('Server offline or unreachable');
+        console.log("Server offline or unreachable");
     }
 }
 
-client.once('ready', () => {
+client.once("ready", () => {
     console.log(`Logged in as ${client.user.tag}`);
-    checkPlayers();                       // Run immediately
-    setInterval(checkPlayers, POLL_INTERVAL);  // Poll every 5 seconds
+    checkPlayers();
+    setInterval(checkPlayers, POLL_INTERVAL);
 });
 
 client.login(TOKEN);
-
-
-       
