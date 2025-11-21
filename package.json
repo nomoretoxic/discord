@@ -1,24 +1,15 @@
 {
   "name": "minecraft-discord-bot",
   "version": "1.0.0",
-  "description": "A Discord bot that notifies when players join or leave a Minecraft server.",
-  "type": "module",
+  "description": "Minecraft join/leave Discord notifier",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node index.js"
   },
-  {
-  "type": "module"
-}
-  "author": "YourName",
-  "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.13.0",
-    "minecraft-server-util": "^5.2.1",
-    "dotenv": "^16.3.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.2"
+    "discord.js": "^14.15.2",
+    "dotenv": "^16.4.5",
+    "minecraft-server-util": "^5.4.3"
   }
 }
